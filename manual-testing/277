@@ -1,0 +1,5 @@
+36%
+
+- copying production data for testing took 3 hours
+- verifying a single endpoint manually took 15 minutes
+- we had to verify 8 different endpoints
