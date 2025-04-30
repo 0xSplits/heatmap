@@ -15,23 +15,54 @@ import (
 )
 
 const (
-	envHeatmapDataDir, defHeatmapDataDir = "HEATMAP_DATA_DIR", "./manual-testing/"
+	envPainpointsDataBucket, defPainpointsDataBucket = "PAINPOINTS_DATA_BUCKET", "0,10,20,30,40,50"
+	envPainpointsDataDir, defPainpointsDataDir       = "PAINPOINTS_DATA_DIR", "./painpoints/"
+	envPainpointsDataSuffix, defPainpointsDataSuffix = "PAINPOINTS_DATA_SUFFIX", "%"
 )
 
-// Buckets for color mapping
-var colors = []string{
-	"\033[48;5;9m",   // Red
-	"\033[48;5;204m", //
-	"\033[48;5;214m", //
-	"\033[48;5;220m", //
-	"\033[48;5;112m", //
-	"\033[48;5;10m",  // Green
+const (
+	green3 = "\033[48;5;10m"  // brightest green
+	green2 = "\033[48;5;112m" //
+	green1 = "\033[48;5;220m" // yellow
+	red1   = "\033[48;5;214m" // orange
+	red2   = "\033[48;5;204m" //
+	red3   = "\033[48;5;9m"   // darkest red
+)
+
+var colours = []string{
+	green3, // >=  0
+	green2, // >= 10
+	green1, // >= 20
+	red1,   // >= 30
+	red2,   // >= 40
+	red3,   // >= 50
+}
+
+var buckets []float64
+
+func init() {
+	lis := strings.SplitSeq(dataBucket(), ",")
+
+	for s := range lis {
+		n, err := strconv.ParseFloat(strings.TrimSpace(s), 64)
+		if err != nil {
+			tracer.Panic(tracer.Maskf(stringToNumberError, "invalid bucket %q", s))
+		}
+
+		{
+			buckets = append(buckets, n)
+		}
+	}
+
+	if len(buckets) != len(colours) {
+		tracer.Panic(tracer.Maskf(bucketColourMatchError, "%d != %d", len(buckets), len(colours)))
+	}
 }
 
 func main() {
 	// generate trending percentages, from high to low
 
-	var all []int
+	var all []float64
 	if len(os.Args) == 2 && (os.Args[1] == "-t" || os.Args[1] == "--test") {
 		all = fakeData()
 	} else {
@@ -48,7 +79,7 @@ func main() {
 			var i = (c * row) + r
 
 			if i < len(all) {
-				fmt.Printf("%s %s", colorForPercentage(all[i]), "\033[0m")
+				fmt.Printf("%s %s", colourForNumber(all[i]), "\033[0m")
 			} else {
 				break
 			}
@@ -60,75 +91,76 @@ func main() {
 	}
 }
 
-func colorForPercentage(p int) string {
-	switch {
-	case p > 50:
-		return colors[0]
-	case p > 40:
-		return colors[1]
-	case p > 30:
-		return colors[2]
-	case p > 20:
-		return colors[3]
-	case p > 10:
-		return colors[4]
-	default:
-		return colors[5]
+func colourForNumber(n float64) string {
+	for i := len(buckets) - 1; i >= 0; i-- {
+		if n >= buckets[i] {
+			return colours[i]
+		}
 	}
+
+	return colours[0]
 }
 
-func dataPath() string {
-	var e = os.Getenv(envHeatmapDataDir)
+func dataBucket() string {
+	var e = os.Getenv(envPainpointsDataBucket)
 	if e != "" {
 		return e
 	}
 
-	return defHeatmapDataDir
+	return defPainpointsDataBucket
 }
 
-func fileData() []int {
-	var all []int
+func dataDir() string {
+	var e = os.Getenv(envPainpointsDataDir)
+	if e != "" {
+		return e
+	}
+
+	return defPainpointsDataDir
+}
+
+func dataSuffix() string {
+	var e = os.Getenv(envPainpointsDataSuffix)
+	if e != "" {
+		return e
+	}
+
+	return defPainpointsDataSuffix
+}
+
+func fileData() []float64 {
+	var all []float64
 
 	for _, p := range readDir() {
 		// open the file
 
 		f, err := os.Open(p)
 		if err != nil {
-			panic(err)
+			tracer.Panic(err)
 		}
 		defer f.Close()
 
 		// parse and verify
 
-		n, err := verifyNumber(readLine(f))
+		n, err := readNumber(readLine(f))
 		if err != nil {
-			panic(err)
+			tracer.Panic(err)
 		}
 
 		{
-			all = append(all, int(n))
+			all = append(all, n)
 		}
 	}
 
 	return all
 }
 
-func minMax(f float64) int {
-	if f > 100 {
-		return 100
-	} else if f < 0 {
-		return 0
-	}
-
-	return int(f)
-}
-
 func readDir() []string {
-	var pat = dataPath()
+	var pat = dataDir()
 
 	dir, err := os.ReadDir(pat)
 	if err != nil {
-		panic(err)
+		tracer.Panic(err)
 	}
 
 	// sort dir entries numerically
@@ -140,9 +172,13 @@ func sortPaths(pat string, dir []os.DirEntry) []string {
 	var num []int
 
 	for _, e := range dir {
+		if e.Name() == "README.md" {
+			continue // ignore data dir readme
+		}
+
 		n, err := strconv.Atoi(e.Name())
 		if err != nil {
-			panic(err)
+			tracer.Panic(err)
 		}
 
 		{
@@ -172,8 +208,8 @@ func readLine(f *os.File) string {
 	return ""
 }
 
-func fakeData() []int {
-	var all []int
+func fakeData() []float64 {
+	var all []float64
 
 	var tot = 584
 	var min = 5
@@ -186,7 +222,7 @@ func fakeData() []int {
 		var v = b + n
 
 		{
-			all = append(all, minMax(v))
+			all = append(all, v)
 		}
 	}
 
@@ -194,18 +230,14 @@ func fakeData() []int {
 }
 
 func trimString(s string) string {
-	return strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(s), "%"))
+	return strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(s), dataSuffix()))
 }
 
-func verifyNumber(s string) (int, error) {
+func readNumber(s string) (float64, error) {
 	n, err := strconv.ParseFloat(trimString(s), 64)
 	if err != nil {
-		return 0, tracer.Maskf(stringToNumberError, "%s", s)
+		return 0, tracer.Maskf(stringToNumberError, "invalid data %q", s)
 	}
 
-	if n < 0 || n > 100 {
-		return 0, tracer.Maskf(outOfRangeError, "%s", s)
-	}
-
-	return int(n), nil
+	return n, nil
 }

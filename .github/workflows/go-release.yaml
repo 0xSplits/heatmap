@@ -2,7 +2,7 @@
 # Do not edit. This file was generated via the "workflow" command line tool.
 # More information about the tool can be found at github.com/xh3b4sd/workflow.
 #
-#     workflow create releasego -n github.com/0xSplits/heatmap
+#     workflow create releasego -n github.com/0xSplits/painpoints
 #
 
 name: "go-release"
@@ -30,12 +30,12 @@ jobs:
 
       - name: "Cross Compile Binaries"
         run: |
-          GOOS=darwin GOARCH=amd64 go build -o github.com/0xSplits/heatmap-darwin-amd64 -ldflags="-X 'github.com/${{ github.repository_owner }}/github.com/0xSplits/heatmap/pkg/project.sha=${{ github.sha }}' -X 'github.com/${{ github.repository_owner }}/github.com/0xSplits/heatmap/pkg/project.tag=${{ github.ref_name }}'"
-          GOOS=linux GOARCH=amd64 go build -o github.com/0xSplits/heatmap-linux-amd64 -ldflags="-X 'github.com/${{ github.repository_owner }}/github.com/0xSplits/heatmap/pkg/project.sha=${{ github.sha }}' -X 'github.com/${{ github.repository_owner }}/github.com/0xSplits/heatmap/pkg/project.tag=${{ github.ref_name }}'"
+          GOOS=darwin GOARCH=amd64 go build -o github.com/0xSplits/painpoints-darwin-amd64 -ldflags="-X 'github.com/${{ github.repository_owner }}/github.com/0xSplits/painpoints/pkg/project.sha=${{ github.sha }}' -X 'github.com/${{ github.repository_owner }}/github.com/0xSplits/painpoints/pkg/project.tag=${{ github.ref_name }}'"
+          GOOS=linux GOARCH=amd64 go build -o github.com/0xSplits/painpoints-linux-amd64 -ldflags="-X 'github.com/${{ github.repository_owner }}/github.com/0xSplits/painpoints/pkg/project.sha=${{ github.sha }}' -X 'github.com/${{ github.repository_owner }}/github.com/0xSplits/painpoints/pkg/project.tag=${{ github.ref_name }}'"
 
       - name: "Upload To Github"
         uses: "softprops/action-gh-release@v2"
         with:
           files: |
-            github.com/0xSplits/heatmap-darwin-amd64
-            github.com/0xSplits/heatmap-linux-amd64
+            github.com/0xSplits/painpoints-darwin-amd64
+            github.com/0xSplits/painpoints-linux-amd64

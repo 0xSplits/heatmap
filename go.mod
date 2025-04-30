@@ -1,4 +1,4 @@
-module github.com/0xSplits/heatmap
+module github.com/0xSplits/painpoints
 
 go 1.24
 
