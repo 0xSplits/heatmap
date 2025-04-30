@@ -6,13 +6,9 @@ import (
 	"github.com/xh3b4sd/tracer"
 )
 
-var outOfRangeError = &tracer.Error{
-	Kind: "outOfRangeError",
-	Desc: "The given number was not found to be between 0% and 100%.",
-}
-
-func isOutOfRange(err error) bool {
-	return errors.Is(err, outOfRangeError)
+var bucketColourMatchError = &tracer.Error{
+	Kind: "bucketColourMatchError",
+	Desc: "The number of buckets must match the number of colours.",
 }
 
 var stringToNumberError = &tracer.Error{
