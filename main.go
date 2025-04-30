@@ -21,12 +21,12 @@ const (
 )
 
 const (
-	green3 = "\033[48;5;10m"  // brightest green
-	green2 = "\033[48;5;112m" //
-	green1 = "\033[48;5;220m" // yellow
-	red1   = "\033[48;5;214m" // orange
-	red2   = "\033[48;5;204m" //
-	red3   = "\033[48;5;9m"   // darkest red
+	green3 = "\033[38;5;10m\033[48;5;10m"   // brightest green
+	green2 = "\033[38;5;112m\033[48;5;112m" //
+	green1 = "\033[38;5;220m\033[48;5;220m" // yellow
+	red1   = "\033[38;5;214m\033[48;5;214m" // orange
+	red2   = "\033[38;5;204m\033[48;5;204m" //
+	red3   = "\033[38;5;9m\033[48;5;9m"     // darkest red
 )
 
 var colours = []string{
@@ -79,7 +79,7 @@ func main() {
 			var i = (c * row) + r
 
 			if i < len(all) {
-				fmt.Printf("%s %s", colourForNumber(all[i]), "\033[0m")
+				fmt.Printf("%s#%s", colourForNumber(all[i]), "\033[0m")
 			} else {
 				break
 			}
