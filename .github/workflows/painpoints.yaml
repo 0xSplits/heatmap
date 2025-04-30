@@ -26,9 +26,9 @@ jobs:
             exit 1
           fi
 
-      - name: "Download Binary"
+      - name: "Download Painpoints Binary"
         run: |
-          curl -LOs https://github.com/0xSplits/painpoints/releases/download/v0.2.1/painpoints-linux-amd64
+          curl -LOs https://github.com/0xSplits/painpoints/releases/download/v0.2.2/painpoints-linux-amd64
           chmod +x ./painpoints-linux-amd64
 
       - name: Run Color Test
@@ -42,7 +42,7 @@ jobs:
           echo -e "\033[38;5;202m\033[48;5;202mTEST\033[0m" #
           echo -e "\033[38;5;196m\033[48;5;196mTEST\033[0m" # red
 
-      - name: "Generate Heatmap"
+      - name: "Generate Painpoints Heatmap"
         env:
           TERM: xterm-256color
         run: |
