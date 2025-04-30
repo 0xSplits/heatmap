@@ -21,6 +21,11 @@ jobs:
             exit 1
           fi
 
+          if [ ! -s "$FILE_PATH" ]; then
+            echo "The data file for your pull request is empty: $FILE_PATH"
+            exit 1
+          fi
+
       - name: "Download Binary"
         run: |
           curl -LOs https://github.com/0xSplits/painpoints/releases/download/v0.2.0/painpoints-linux-amd64
