@@ -28,17 +28,27 @@ jobs:
 
       - name: "Download Binary"
         run: |
-          curl -LOs https://github.com/0xSplits/painpoints/releases/download/v0.2.0/painpoints-linux-amd64
+          curl -LOs https://github.com/0xSplits/painpoints/releases/download/v0.2.1/painpoints-linux-amd64
           chmod +x ./painpoints-linux-amd64
 
       - name: Color test
         env:
           TERM: xterm-256color
         run: |
-          echo -e "\033[48;5;10m     \033[0m"
-          echo -e "\033[48;5;9m     \033[0m"
+          echo -e "\033[48;5;10mTEST1\033[0m"
+          echo -e "\033[48;5;9mTEST2\033[0m"
 
-      - name: "Generate Heatmap"
+      - name: "Generate Heatmap 1"
+        run: |
+          ./painpoints-linux-amd64
+
+      - name: "Generate Heatmap 2"
+        env:
+          TERM: xterm-256color
+        run: |
+          ./painpoints-linux-amd64
+
+      - name: "Generate Heatmap 3"
         run: TERM=xterm-256color script -q -c "./painpoints-linux-amd64" /dev/null
         env:
           TERM: xterm-256color
