@@ -31,6 +31,10 @@ jobs:
           curl -LOs https://github.com/0xSplits/painpoints/releases/download/v0.2.0/painpoints-linux-amd64
           chmod +x ./painpoints-linux-amd64
 
-      - name: "Generate Heatmap"
+      - name: "Generate Heatmap 1"
         run: |
-          script -q -c "./painpoints-linux-amd64" /dev/null
+          TERM=xterm script -q -c "./painpoints-linux-amd64" /dev/null
+
+      - name: "Generate Heatmap 2"
+        run: |
+          TERM=xterm ./painpoints-linux-amd64
