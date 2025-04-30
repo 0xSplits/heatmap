@@ -33,4 +33,4 @@ jobs:
 
       - name: "Generate Heatmap"
         run: |
-          ./painpoints-linux-amd64
+          ./painpoints-linux-amd64 | tee /dev/tty
