@@ -1,0 +1,28 @@
+name: "painpoints"
+
+on: "push"
+
+jobs:
+  "painpoints":
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Setup Git Project"
+        uses: "actions/checkout@v4"
+
+      - name: "Check Data File"
+        run: |
+          PR_NUMBER=$(echo "${{ github.event.pull_request.number }}")
+          FILE_PATH="./painpoints/${PR_NUMBER}"
+
+          if [ ! -f "$FILE_PATH" ]; then
+            echo "Please create the data file for your pull request: $FILE_PATH"
+            exit 1
+          fi
+
+      - name: "Download Binary"
+        run: |
+          curl -LOs https://github.com/0xSplits/painpoints/releases/download/v0.1.0/painpoints-linux-amd64
+
+      - name: "Generate Heatmap"
+        run: |
+          ./painpoints-linux-amd64
