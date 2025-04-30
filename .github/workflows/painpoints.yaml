@@ -32,10 +32,18 @@ jobs:
           chmod +x ./painpoints-linux-amd64
 
       - name: Run Color Test
+        env:
+          TERM: xterm-256color
         run: |
-          echo -e "\033[48;5;10mTEST1\033[0m"
-          echo -e "\033[48;5;9mTEST2\033[0m"
+          echo -e "\033[38;5;46m\033[48;5;46mTEST\033[0m"   # green
+          echo -e "\033[38;5;118m\033[48;5;118mTEST\033[0m" #
+          echo -e "\033[38;5;220m\033[48;5;220mTEST\033[0m" # yellow
+          echo -e "\033[38;5;208m\033[48;5;208mTEST\033[0m" # orange
+          echo -e "\033[38;5;202m\033[48;5;202mTEST\033[0m" #
+          echo -e "\033[38;5;196m\033[48;5;196mTEST\033[0m" # red
 
       - name: "Generate Heatmap"
+        env:
+          TERM: xterm-256color
         run: |
           ./painpoints-linux-amd64
